@@ -1,0 +1,15 @@
+const ApiError = require("../utils/ApiErrors");
+
+const validateAllowedFields=(allowedFileds)=>{
+    const helper=(req,res,next)=>{
+        const allFeilds=Object.keys(req.body);
+        const extraFields=allFeilds.filter(feilds=> !allowedFileds.includes(feilds))
+        if(extraFields.length>0){
+            return next(new ApiError(400,"extra fields present",extraFields))
+        }
+        next()
+    }
+    return helper
+}
+
+module.exports=validateAllowedFields;
