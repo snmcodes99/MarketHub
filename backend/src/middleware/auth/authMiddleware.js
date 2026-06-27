@@ -1,9 +1,8 @@
 const jwt=require("jsonwebtoken")
-const ApiError=require("../utils/ApiErrors")
-const UserModel = require("../models/User")
+const ApiError=require("../../utils/ApiErrors")
+const UserModel = require("../../models/User")
 const authMiddleware=async(req,res,next)=>{
     const authHeader=req.headers.authorization
-    console.log(authHeader)
     if(!authHeader){
         return next(new ApiError(401,"unauthorize"))
     }

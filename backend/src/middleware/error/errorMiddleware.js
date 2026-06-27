@@ -1,4 +1,4 @@
-const ApiError=require("../utils/ApiErrors");
+const ApiError=require("../../utils/ApiErrors");
 
 const errorMiddleware=(err,req,res,next)=>{
     console.log(err);

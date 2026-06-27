@@ -1,4 +1,4 @@
-const ApiError=require("../utils/ApiErrors")
+const ApiError=require("../../utils/ApiErrors")
 const authorize=(...roles)=>{
     return (req,res,next)=>{
         if (!req.user){

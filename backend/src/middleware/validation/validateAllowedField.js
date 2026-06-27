@@ -1,4 +1,4 @@
-const ApiError = require("../utils/ApiErrors");
+const ApiError = require("../../utils/ApiErrors");
 
 const validateAllowedFields=(allowedFileds)=>{
     const helper=(req,res,next)=>{
