@@ -15,20 +15,21 @@ const categorySchema=new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    isActive: {
-      type: Boolean,
-      default: true,
+    isActive:{
+      type:Boolean,
+      default:true,
     },
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 categorySchema.set("toJSON", {
   transform:function(doc, ret){
     delete ret.__v;
     return ret;
   },
-});
+})
 
-module.exports = mongoose.model("Category", categorySchema);
+const CategoryModel=mongoose.model("Category", categorySchema);
+module.exports=CategoryModel;

@@ -1,0 +1,122 @@
+const CategoryModel = require("../models/Category");
+const ProductModel = require("../models/Product");
+const slugify = require("slugify");
+const ApiError = require("../utils/ApiErrors");
+
+const createProduct = async (productdata, sellerId) => {
+    const { name, description, brand, category, mrp, sellingPrice, stock, images } = productdata
+    const slug = slugify(name, {
+        lower: true,
+        strict: true,
+        trim: true
+    })
+    const existCategory = await CategoryModel.exists({ _id: category, isActive: true })
+    if (!existCategory) {
+        throw new ApiError(404, "Category not found")
+    }
+    const existProduct = await ProductModel.findOne({
+        seller: sellerId,
+        slug
+    })
+    if (existProduct) {
+        throw new ApiError(409, "product already exist");
+    }
+    const product = await ProductModel.create({
+        name, description, slug, brand, category, mrp, sellingPrice, stock, images, seller: sellerId
+    })
+    return product
+}
+
+const getAllProducts = async () => {
+    const products = await ProductModel.find({ isActive: true })
+        .populate("seller", "name")
+        .populate("category", "name")
+    return products
+}
+
+const getProductByid = async (id) => {
+    const product = await ProductModel.findOne({
+        _id: id,
+        isActive: true
+    })
+        .populate("seller", "name")
+        .populate("category", "name")
+    return product
+}
+
+const updateProduct = async (productId, updateData, seller) => {
+    const product = await ProductModel.findById(productId);
+    if (!product || !product.isActive) {
+        throw new ApiError(404, "Product not found")
+    }
+    const sellerId=seller._id
+    const sellerRole=seller.role
+
+if (sellerRole === "SELLER") {
+    if (product.seller.toString() !== sellerId.toString()) {
+        throw new ApiError(403, "you are not allowed to update");
+    }
+}
+    if (updateData.category) {
+        const existcategory = await CategoryModel.exists({
+            _id: updateData.category,
+            isActive: true,
+        })
+        if (!existcategory) {
+            throw new ApiError(404, "category not found")
+        }
+    }
+    if (updateData.name) {
+        const slug = slugify(updateData.name, {
+            lower: true,
+            strict: true,
+            trim: true,
+        })
+        const existingProduct = await ProductModel.findOne({
+            seller: sellerId,
+            slug,
+            _id: { $ne: productId },
+        })
+        if (existingProduct) {
+            throw new ApiError(409, "product already exists");
+        }
+        updateData.slug = slug
+    }
+    const newMrp = updateData.mrp ?? product.mrp;
+    const newSellingPrice = updateData.sellingPrice ?? product.sellingPrice
+    if (newSellingPrice > newMrp) {
+        throw new ApiError(400, "Selling price cannot be greater than MRP")
+    }
+    Object.assign(product, updateData)
+    await product.save()
+    return product
+}
+
+const deleteProduct = async (productId, seller) => {
+    const product = await ProductModel.findOne({
+        _id: productId,
+        isActive: true,
+    })
+    if (!product) {
+        throw new ApiError(404, "product not found")
+    }
+    const sellerId=seller._id
+    const sellerRole=seller.role
+
+if (sellerRole === "SELLER") {
+    if (product.seller.toString() !== sellerId.toString()) {
+        throw new ApiError(403, "you are not allowed to delete");
+    }
+}
+    product.isActive = false
+    await product.save()
+    return product
+}
+
+module.exports = {
+    createProduct,
+    getAllProducts,
+    getProductByid,
+    updateProduct,
+    deleteProduct
+}
