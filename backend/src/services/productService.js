@@ -49,14 +49,14 @@ const updateProduct = async (productId, updateData, seller) => {
     if (!product || !product.isActive) {
         throw new ApiError(404, "Product not found")
     }
-    const sellerId=seller._id
-    const sellerRole=seller.role
+    const sellerId = seller._id
+    const sellerRole = seller.role
 
-if (sellerRole === "SELLER") {
-    if (product.seller.toString() !== sellerId.toString()) {
-        throw new ApiError(403, "you are not allowed to update");
+    if (sellerRole === "SELLER") {
+        if (product.seller.toString() !== sellerId.toString()) {
+            throw new ApiError(403, "you are not allowed to update");
+        }
     }
-}
     if (updateData.category) {
         const existcategory = await CategoryModel.exists({
             _id: updateData.category,
@@ -73,7 +73,7 @@ if (sellerRole === "SELLER") {
             trim: true,
         })
         const existingProduct = await ProductModel.findOne({
-            seller: sellerId,
+            seller: product.seller,
             slug,
             _id: { $ne: productId },
         })
@@ -100,14 +100,14 @@ const deleteProduct = async (productId, seller) => {
     if (!product) {
         throw new ApiError(404, "product not found")
     }
-    const sellerId=seller._id
-    const sellerRole=seller.role
+    const sellerId = seller._id
+    const sellerRole = seller.role
 
-if (sellerRole === "SELLER") {
-    if (product.seller.toString() !== sellerId.toString()) {
-        throw new ApiError(403, "you are not allowed to delete");
+    if (sellerRole === "SELLER") {
+        if (product.seller.toString() !== sellerId.toString()) {
+            throw new ApiError(403, "you are not allowed to delete");
+        }
     }
-}
     product.isActive = false
     await product.save()
     return product

@@ -15,7 +15,6 @@ const ProductScheme=new mongoose.Schema({
     slug:{ 
         type:String,
         required: true,
-        unique:true,
         lowercase: true,
         trim: true,
     },
@@ -72,6 +71,10 @@ const ProductScheme=new mongoose.Schema({
     timestamps: true
 }
 )
+ProductScheme.index(
+    {seller:1,slug: 1 },
+    {unique:true }
+);
 ProductScheme.set("toJSON",{
     transform:(doc,ret)=>{
         delete ret.__v;
