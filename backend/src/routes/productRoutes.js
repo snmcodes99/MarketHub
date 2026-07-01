@@ -8,12 +8,13 @@ const validate=require("../middleware/validation/validate");
 
 const productController=require("../controllers/productController");
 
-const {productIdValidation, createProductValidation, updateProductValidation } = require("../middleware/validation/productValidation");
+const { createProductValidation, updateProductValidation } = require("../middleware/validation/productValidation");
+const { mongoIdValidation } = require("../middleware/validation/commonValidation");
 
 const router=express.Router();
 
 router.get("/",productController.getAllProducts)
-router.get("/:id",productIdValidation,validate,productController.getProductByid)
+router.get("/:id", mongoIdValidation("id"),validate,productController.getProductByid)
 
 router.post("/",
     authMiddleware,
@@ -46,7 +47,7 @@ router.patch("/:id",
         "stock",
         "images",
     ]),
-    productIdValidation,
+    mongoIdValidation("id"),
     updateProductValidation,
     validate,
     productController.updateProduct
@@ -56,7 +57,7 @@ router.delete(
     "/:id",
     authMiddleware,
     authorize("SELLER", "ADMIN"),
-    productIdValidation,
+    mongoIdValidation("id"),
     validate,
     productController.deleteProduct
 );

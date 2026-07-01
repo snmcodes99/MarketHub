@@ -1,5 +1,4 @@
 const {body , validationResult}= require("express-validator");
-const ApiError = require("../../utils/ApiErrors");
 
 const createCategoryValidation=[
     body("name").trim().notEmpty().withMessage("Category name is required").bail().isLength({min:2,max:50}).withMessage("invalid size"),

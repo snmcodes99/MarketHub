@@ -119,11 +119,7 @@ const updateProductValidation=[
     .isBoolean()
     .withMessage("isActive must be a boolean"),
 ];
-const productIdValidation = [
-    param("id").isMongoId().withMessage("Invalid product id"),
-];
 module.exports = {
   createProductValidation,
   updateProductValidation,
-  productIdValidation
 };

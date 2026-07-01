@@ -12,6 +12,12 @@ const errorMiddleware=(err,req,res,next)=>{
         }
         return res.status(err.statusCode).json(response)
     }
+    if(err.code===11000){
+        return res.status(409).json({
+            success:false,
+            message:"Duplicate Resource"
+        })
+    }
     return res.status(500).json({
         success:false,
         message:"internal server error"
