@@ -1,0 +1,70 @@
+const mongoose = require("mongoose");
+const addressSchema=new mongoose.Schema(
+    {
+        user:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"User",
+            required:true,
+        },
+        name:{
+            type:String,
+            required:true,
+            trim:true,
+        },
+        phoneNo:{
+            type:String,
+            required:true,
+            trim:true,
+        },
+        houseNo:{
+            type:String,
+            required:true,
+            trim:true,
+        },
+        street:{
+            type:String,
+            required:true,
+            trim:true,
+        },
+        city:{
+            type:String,
+            required:true,
+            trim:true,
+        },
+        state:{
+            type:String,
+            required:true,
+            trim:true,
+        },
+        country:{
+            type:String,
+            default:"India",
+            trim:true,
+        },
+        zipCode:{
+            type:String,
+            required:true,
+            trim:true,
+        },
+        addressType:{
+            type:String,
+            enum:["HOME","OFFICE","OTHER"],
+            default:"HOME",
+        },
+        isDefault:{
+            type:Boolean,
+            default:false,
+        },
+    },
+    {
+        timestamps:true,
+    }
+)
+addressSchema.set("toJSON",{
+    transform:function(doc,ret){
+        delete ret.__v;
+        return ret;
+    },
+})
+const AddressModel=mongoose.model("Address",addressSchema)
+module.exports=AddressModel

@@ -1,4 +1,3 @@
-const SellerRequestModel = require("../models/sellerRequest")
 const sellerRequestModel = require("../models/sellerRequest")
 const UserModel = require("../models/User")
 const ApiError = require("../utils/ApiErrors")

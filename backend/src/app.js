@@ -4,6 +4,7 @@ const errorMiddleware=require("./middleware/error/errorMiddleware")
 const categoryRoutes=require("./routes/categoryRoutes");
 const productRoutes=require("./routes/productRoutes")
 const sellerRequestRoutes=require("./routes/sellerRequestRoutes")
+const addressRoutes=require("./routes/addressRoutes")
 const app=express();
 app.use(express.json())
 
@@ -17,6 +18,7 @@ app.use("/api/auth",authRoutes);
 app.use("/api/category",categoryRoutes)
 app.use("/api/product",productRoutes)
 app.use("/api/seller-request",sellerRequestRoutes)
+app.use("/api/addresses",addressRoutes)
 
 app.use(errorMiddleware)
 module.exports=app
