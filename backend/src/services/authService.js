@@ -1,10 +1,10 @@
-const userModel = require("../models/User");
+const UserModel = require("../models/User");
 const bcrypt = require("bcrypt");
 const ApiError = require("../utils/ApiErrors");
 const jwt = require("jsonwebtoken");
 const registerSerice = async (data) => {
     const { name, email } = data;
-    const isUser = await userModel.findOne({ email });
+    const isUser = await UserModel.findOne({ email });
     if (isUser) {
         throw new ApiError(409, "email already exists");
     }
@@ -15,13 +15,13 @@ const registerSerice = async (data) => {
         password: hashedPassword,
         role: "CUSTOMER",
     };
-    const user = await userModel.create(userData);
+    const user = await UserModel.create(userData);
     return user;
 };
 
 const loginService = async (data) => {
     const { email, password } = data;
-    const user = await userModel.findOne({ email }).select("+password");
+    const user = await UserModel.findOne({ email }).select("+password");
     if (!user) {
         throw new ApiError(401, "Invalid Credentials");
     }
@@ -46,4 +46,31 @@ const loginService = async (data) => {
     };
 };
 
-module.exports = { registerSerice, loginService };
+const getCurrentUser=async(userData)=>{
+    const user=await UserModel.findById(userData._id)
+    if(!user){
+        throw new ApiError(404,"User not found")
+    }
+    return user
+}
+
+const changePassword=async(userData,passwordData)=>{
+    const {currentPassword,newPassword}=passwordData
+    const user=await UserModel.findById(userData._id).select("+password")
+    if(!user){
+        throw new ApiError(404,"User not found")
+    }
+    const isPasswordCorrect=await bcrypt.compare(currentPassword,user.password)
+    if(!isPasswordCorrect){
+        throw new ApiError(401,"Current password is incorrect")
+    }
+    user.password=await bcrypt.hash(newPassword,10)
+    await user.save()
+    return
+}
+
+const logout=async()=>{
+    return
+}
+
+module.exports = { registerSerice, loginService, getCurrentUser, changePassword, logout};

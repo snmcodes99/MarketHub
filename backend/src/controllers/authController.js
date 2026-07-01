@@ -1,3 +1,4 @@
+const { get } = require("mongoose");
 const authService=require("../services/authService")
 
 const register=async(req,res)=>{
@@ -20,8 +21,28 @@ const login=async(req,res)=>{
         user
     })
 }
-const logout=()=>{}
-const forgotPassword=()=>{}
-const resetPassword=()=>{}
 
-module.exports={register,login,logout,forgotPassword,resetPassword}
+const getCurrentUser=async(req,res)=>{
+    const user=await authService.getCurrentUser(req.user)
+    res.status(200).json({
+        success:true,
+        message:"User fetched successfully",
+        data:user
+    })
+}
+
+const changePassword=async(req,res)=>{
+    await authService.changePassword(req.user,req.body)
+    res.status(200).json({
+        success:true,
+        message:"Password changed successfully"
+    })
+}
+const logout=async(req,res)=>{
+    await authService.logout()
+    res.status(200).json({
+        success:true,
+        message:"Logged out successfully"
+    })
+}
+module.exports={register,login,getCurrentUser,changePassword,logout}
