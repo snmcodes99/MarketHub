@@ -4,7 +4,7 @@ const createAddress=async(req,res)=>{
     const newAddress=await addressService.createAddress(req.body,req.user)
     res.status(201).json({
         success:true,
-        message:"Address created successfully",
+        message:"Address added successfully",
         data:newAddress
     })
 }
