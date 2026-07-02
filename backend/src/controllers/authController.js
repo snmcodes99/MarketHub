@@ -1,4 +1,3 @@
-const { get } = require("mongoose");
 const authService=require("../services/authService")
 
 const register=async(req,res)=>{
